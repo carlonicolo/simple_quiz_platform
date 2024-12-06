@@ -48,7 +48,7 @@
     </head>
     <body>
         <h1>Programmazione C</h1>
-        <div id="timer">Tempo rimasto: <span id="time">20</span> secondi</div>
+        <div id="timer">Tempo rimasto: <span id="time">120</span> secondi</div>
 
         <!-- Domanda a scelta multipla -->
         <div class="question-container" id="question1">
@@ -74,7 +74,7 @@
 
         <!-- Domanda a scelta multipla con più risposte -->
         <div class="question-container" id="question3">
-            <p>3. uali di questi sono tipi di dati primitivi in C?</p>
+            <p>3. Quali di questi sono tipi di dati primitivi in C?</p>
             <form>
                 <label><input type="checkbox" name="q3" value="int" /> int</label><br />
                 <label><input type="checkbox" name="q3" value="float" /> float</label><br />
@@ -102,12 +102,12 @@
         </div>
         
         <div class="question-container" id="question5">
-            <p>5. Quali di questi sono operatori aritmetici in C?</p>
+            <p>5. Quali di questi operatori sono logici in C?</p>
             <form>
-                <label><input type="checkbox" name="q5" value="+" /> +</label><br />
-                <label><input type="checkbox" name="q5" value="-" /> -</label><br />
-                <label><input type="checkbox" name="q5" value="*" /> *</label><br />
-                <label><input type="checkbox" name="q5" value="/" /> /</label><br />
+                <label><input type="checkbox" name="q5" value="&&" /> &&</label><br />
+                <label><input type="checkbox" name="q5" value="||" /> ||</label><br />
+                <label><input type="checkbox" name="q5" value="!" /> !</label><br />
+                <label><input type="checkbox" name="q5" value="x" /> x</label><br />
             </form>
             <button onclick="checkMultipleAnswers('q5', ['&&', '||', '!'], 'feedback5')">
                 Invia Risposta
@@ -116,14 +116,14 @@
         </div>
         
         <div class="question-container" id="question6">
-            <p>6. Quali di questi sono operatori aritmetici in C?</p>
+            <p>6. Quali tipi di memoria sono gestiti in C con il comando malloc?</p>
             <form>
                 <label><input type="checkbox" name="q6" value="dinamica" /> dinamica</label><br />
                 <label><input type="checkbox" name="q6" value="volatile" /> volatile</label><br />
                 <label><input type="checkbox" name="q6" value="stack" /> stack</label><br />
                 <label><input type="checkbox" name="q6" value="heap" /> heap</label><br />
             </form>
-            <button onclick="checkMultipleAnswers('q6', ['&&', '||', '!'], 'feedback6')">
+            <button onclick="checkMultipleAnswers('q6', ['heap'], 'feedback6')">
                 Invia Risposta
             </button>
             <p class="feedback" id="feedback6"></p>
@@ -148,7 +148,7 @@
         </div>
         
         <div class="question-container" id="question9">
-            <p>9. Come si chiama il tipo di dato utilizzato per memorizzare caratteri singoli?</p>
+            <p>9. Quale simbolo si utilizza per terminare un'istruzione in C?</p>
             <form>
                 <input type="text" id="q9" />
             </form>
@@ -192,32 +192,32 @@
 </p>
             <form>
                 <label><input type="radio" name="q13" value="error" /> error</label><br />
-                <label><input type="radio" name="q13" value="sum" /> 10</label><br />
-                <label><input type="radio" name="q13" value="nosum" /> 5</label><br />
+                <label><input type="radio" name="q13" value="10" /> 10</label><br />
+                <label><input type="radio" name="q13" value="5" /> 5</label><br />
             </form>
-            <button onclick="checkAnswer('q13', 'sum', 'feedback13')">Invia Risposta</button>
+            <button onclick="checkAnswer('q13', '10', 'feedback13')">Invia Risposta</button>
             <p class="feedback" id="feedback13"></p>
         </div>
         
         <div class="question-container" id="question14">
             <p>14. Come si dichiara un array di 10 interi in C?</p>
             <form>
-                <label><input type="radio" name="q14" value="a" /> arr[10]</label><br />
-                <label><input type="radio" name="q14" value="b" /> list[10]</label><br />
-                <label><input type="radio" name="q14" value="c" /> int arr[10]</label><br />
+                <label><input type="radio" name="q14" value="arr[10]" /> arr[10]</label><br />
+                <label><input type="radio" name="q14" value="list[10]" /> list[10]</label><br />
+                <label><input type="radio" name="q14" value="int arr[10]" /> int arr[10]</label><br />
             </form>
-            <button onclick="checkAnswer('q14', 'c', 'feedback14')">Invia Risposta</button>
+            <button onclick="checkAnswer('q14', 'int arr[10]', 'feedback14')">Invia Risposta</button>
             <p class="feedback" id="feedback14"></p>
         </div>
         
         <div class="question-container" id="question15">
             <p>15. Quale è il risultato di sizeof(int) in C su una macchina a 32 bit?</p>
             <form>
-                <label><input type="radio" name="q15" value="a" /> 8</label><br />
-                <label><input type="radio" name="q15" value="b" /> 4</label><br />
-                <label><input type="radio" name="q15" value="c" /> 2</label><br />
+                <label><input type="radio" name="q15" value="8" /> 8</label><br />
+                <label><input type="radio" name="q15" value="4" /> 4</label><br />
+                <label><input type="radio" name="q15" value="2" /> 2</label><br />
             </form>
-            <button onclick="checkAnswer('q15', 'b', 'feedback15')">Invia Risposta</button>
+            <button onclick="checkAnswer('q15', '4', 'feedback15')">Invia Risposta</button>
             <p class="feedback" id="feedback15"></p>
         </div>
 
@@ -228,7 +228,7 @@
             let score = 0; // Variabile per il punteggio dell'utente
             let totalQuestions = 3; // Numero totale di domande
             let answeredQuestions = 0; // Numero di domande risposte
-            let timeLeft = 20; // Tempo rimanente in secondi
+            let timeLeft = 120; // Tempo rimanente in secondi
             const timerDisplay = document.getElementById("time");
             const scoreDisplay = document.getElementById("score");
 
@@ -400,12 +400,36 @@
             function getCorrectAnswer(container) {
                 const questionText = container.querySelector("p").textContent;
 
-                if (questionText.includes("colore del cielo")) {
-                    return "Blu";
-                } else if (questionText.includes("capitale d'Italia")) {
-                    return "Roma";
-                } else if (questionText.includes("possono volare")) {
-                    return "Uccello, Pipistrello";
+                if (questionText.includes("stampare su schermo in C")) {
+                    return "print()";
+                } else if (questionText.includes("funzione principale in un programma C")) {
+                    return "main";
+                } else if (questionText.includes("quali di questi sono tipi di dati primitivi in C")) {
+                    return "int, float, double";
+                } else if (questionText.includes("sono operatori aritmetici in C")) {
+                    return "+, -, *, /";
+                } else if (questionText.includes("operatori sono logici in C")) {
+                    return "&&, ||, !";
+                } else if (questionText.includes("gestiti in C con il comando malloc")) {
+                    return "heap";
+                } else if (questionText.includes("includere una libreria standard")) {
+                    return "#include";
+                } else if (questionText.includes("utilizzato per memorizzare caratteri singoli")) {
+                    return "char";
+                } else if (questionText.includes("per terminare un'istruzione in C")) {
+                    return ";";
+                } else if (questionText.includes("stampare un numero intero in C")) {
+                    return "%d";
+                } else if (questionText.includes("calcola il resto di una divisione")) {
+                    return "%";
+                } else if (questionText.includes("per leggere input da tastiera in C")) {
+                    return "scanf";
+                } else if (questionText.includes("output della funzione printf")) {
+                    return "10";
+                } else if (questionText.includes("Come si dichiara un array di 10 interi in C")) {
+                    return "int arr[10]";
+                } else if (questionText.includes("sizeof(int) in C su una macchina a 32 bit")) {
+                    return "4";
                 } else {
                     return "Sconosciuto";
                 }
