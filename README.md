@@ -1,1 +1,1 @@
-# simple_quiz_platform
+# Quiz Platform
