@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interattivo con Timer e PDF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+        }
+        .question-container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .feedback {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .feedback.correct {
+            color: green;
+        }
+        .feedback.wrong {
+            color: red;
+        }
+        button {
+            padding: 8px 12px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #timer {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        #score {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Quiz Interattivo con Timer e PDF</h1>
+<div id="timer">Tempo rimasto: <span id="time">20</span> secondi</div>
+
+<!-- Domanda a scelta multipla -->
+<div class="question-container" id="question1">
+    <p>1. Qual è il colore del cielo durante una giornata serena?</p>
+    <form>
+        <label><input type="radio" name="q1" value="blu"> Blu</label><br>
+        <label><input type="radio" name="q1" value="verde"> Verde</label><br>
+        <label><input type="radio" name="q1" value="rosso"> Rosso</label><br>
+        <label><input type="radio" name="q1" value="giallo"> Giallo</label><br>
+    </form>
+    <button onclick="checkAnswer('q1', 'blu', 'feedback1')">Invia Risposta</button>
+    <p class="feedback" id="feedback1"></p>
+</div>
+
+<!-- Domanda a risposta aperta -->
+<div class="question-container" id="question2">
+    <p>2. Qual è la capitale d'Italia?</p>
+    <form>
+        <input type="text" id="q2">
+    </form>
+    <button onclick="checkAnswer('q2', 'Roma', 'feedback2')">Invia Risposta</button>
+    <p class="feedback" id="feedback2"></p>
+</div>
+
+<!-- Domanda a scelta multipla con più risposte -->
+<div class="question-container" id="question3">
+    <p>3. Quali di questi animali possono volare? (Seleziona tutte le risposte corrette)</p>
+    <form>
+        <label><input type="checkbox" name="q3" value="uccello"> Uccello</label><br>
+        <label><input type="checkbox" name="q3" value="pesce"> Pesce</label><br>
+        <label><input type="checkbox" name="q3" value="pipistrello"> Pipistrello</label><br>
+        <label><input type="checkbox" name="q3" value="gatto"> Gatto</label><br>
+    </form>
+    <button onclick="checkMultipleAnswers('q3', ['uccello', 'pipistrello'], 'feedback3')">Invia Risposta</button>
+    <p class="feedback" id="feedback3"></p>
+</div>
+
+<div id="score"></div>
+<button id="savePdf" onclick="saveQuizToPDF()" style="display: none;">Salva in PDF</button>
+
+<script>
+    let score = 0; // Variabile per il punteggio dell'utente
+    let totalQuestions = 3; // Numero totale di domande
+    let answeredQuestions = 0; // Numero di domande risposte
+    let timeLeft = 20; // Tempo rimanente in secondi
+    const timerDisplay = document.getElementById("time");
+    const scoreDisplay = document.getElementById("score");
+
+    // Funzione per il timer del conto alla rovescia
+    const countdown = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            timerDisplay.textContent = timeLeft;
+        } else {
+            clearInterval(countdown);
+            endQuiz();
+        }
+    }, 1000);
+
+    // Funzione per controllare le risposte a scelta singola o aperta
+    function checkAnswer(questionId, correctAnswer, feedbackId) {
+        let userAnswer;
+
+        if (document.querySelector(`input[name="${questionId}"]:checked`)) {
+            userAnswer = document.querySelector(`input[name="${questionId}"]:checked`).value;
+        } else {
+            userAnswer = document.getElementById(questionId).value.trim();
+        }
+
+        const feedback = document.getElementById(feedbackId);
+
+        if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+            feedback.textContent = "Corretto";
+            feedback.className = "feedback correct";
+            score++;
+        } else {
+            feedback.textContent = "Sbagliato";
+            feedback.className = "feedback wrong";
+        }
+
+        disableInteraction(questionId, feedbackId);
+        answeredQuestions++;
+        checkQuizEnd();
+    }
+
+    // Funzione per controllare le risposte a scelta multipla (checkbox)
+    function checkMultipleAnswers(questionId, correctAnswers, feedbackId) {
+        const userAnswers = Array.from(document.querySelectorAll(`input[name="${questionId}"]:checked`))
+            .map(input => input.value);
+
+        const feedback = document.getElementById(feedbackId);
+
+        const isCorrect = correctAnswers.length === userAnswers.length &&
+            correctAnswers.every(answer => userAnswers.includes(answer));
+
+        if (isCorrect) {
+            feedback.textContent = "Corretto";
+            feedback.className = "feedback correct";
+            score++;
+        } else {
+            feedback.textContent = "Sbagliato";
+            feedback.className = "feedback wrong";
+        }
+
+        disableInteraction(questionId, feedbackId);
+        answeredQuestions++;
+        checkQuizEnd();
+    }
+
+    // Funzione per disabilitare ulteriori risposte
+    function disableInteraction(questionId, feedbackId) {
+        const buttons = document.querySelectorAll(`input[name="${questionId}"]`);
+        buttons.forEach(button => button.disabled = true);
+        document.getElementById(feedbackId).nextElementSibling.disabled = true; // Disabilita il bottone
+    }
+
+    // Funzione per verificare la fine del quiz
+    function checkQuizEnd() {
+        if (answeredQuestions === totalQuestions) {
+            clearInterval(countdown); // Ferma il timer
+            endQuiz();
+        }
+    }
+
+    function endQuiz() {
+    // Disabilita tutte le interazioni
+    const allButtons = document.querySelectorAll("input, button");
+    allButtons.forEach(button => button.disabled = true);
+    
+    // Mostra il punteggio finale
+    scoreDisplay.textContent = `Punteggio finale: ${score} su ${totalQuestions}`;
+    
+    // Nasconde il timer
+    document.getElementById("timer").style.display = "none";
+
+    // Mostra il bottone per salvare in PDF
+    const savePdfButton = document.getElementById("savePdf");
+    savePdfButton.style.display = "block";
+    savePdfButton.disabled = false; // Assicurarsi che il bottone sia abilitato
+}
+
+
+    // Funzione per salvare il quiz e i risultati in PDF con risposte dettagliate
+    function saveQuizToPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        let y = 10; // Posizione verticale iniziale
+
+        // Titolo del PDF
+        doc.setFontSize(16);
+        doc.text("Risultati del Quiz", 10, y);
+        y += 10;
+
+        // Itera su tutte le domande e salva i risultati
+        document.querySelectorAll(".question-container").forEach(container => {
+            const question = container.querySelector("p").textContent;
+            const feedback = container.querySelector(".feedback").textContent;
+            const userAnswer = getUserAnswer(container);
+            const correctAnswer = getCorrectAnswer(container);
+
+            // Domanda
+            doc.setFontSize(12);
+            doc.text(`Domanda: ${question}`, 10, y);
+            y += 10;
+
+            // Risposta dell'utente
+            if (feedback === "Corretto") {
+                doc.setTextColor(0, 128, 0); // Verde
+                doc.text(`Risposta data: ${userAnswer} (Corretto)`, 10, y);
+            } else {
+                doc                .setTextColor(255, 0, 0); // Rosso
+                doc.text(`Risposta data: ${userAnswer} (Sbagliato)`, 10, y);
+            }
+            y += 10;
+
+            // Risposta corretta
+            doc.setTextColor(0, 128, 0); // Verde
+            doc.text(`Risposta corretta: ${correctAnswer}`, 10, y);
+            y += 10;
+
+            doc.setTextColor(0, 0, 0); // Nero per il testo successivo
+        });
+
+        // Aggiungi punteggio finale
+        doc.setFontSize(14);
+        doc.text(`Punteggio finale: ${score} su ${totalQuestions}`, 10, y);
+
+        // Salva il PDF
+        doc.save("quiz_risultati.pdf");
+    }
+
+    // Funzione per ottenere la risposta data dall'utente
+    function getUserAnswer(container) {
+        const radioInputs = container.querySelectorAll("input[type='radio']:checked");
+        const textInput = container.querySelector("input[type='text']");
+        const checkboxInputs = container.querySelectorAll("input[type='checkbox']:checked");
+
+        if (radioInputs.length > 0) {
+            return radioInputs[0].value;
+        } else if (textInput) {
+            return textInput.value.trim();
+        } else if (checkboxInputs.length > 0) {
+            return Array.from(checkboxInputs).map(input => input.value).join(", ");
+        } else {
+            return "Nessuna risposta";
+        }
+    }
+
+    // Funzione per ottenere la risposta corretta
+    function getCorrectAnswer(container) {
+        const questionText = container.querySelector("p").textContent;
+
+        if (questionText.includes("colore del cielo")) {
+            return "Blu";
+        } else if (questionText.includes("capitale d'Italia")) {
+            return "Roma";
+        } else if (questionText.includes("possono volare")) {
+            return "Uccello, Pipistrello";
+        } else {
+            return "Sconosciuto";
+        }
+    }
+</script>
+
+</body>
+</html>
+
